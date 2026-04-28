@@ -4,6 +4,6 @@ const router = express.Router();
 
 import { validateCard } from "../controllers/validationController.js";
 
-router.post("/validate-card", validateCard);
+router.post("/", validateCard);
 
 export default router;

@@ -14,10 +14,10 @@ export const validateCard = (
 			throw new AppError("cardNumber is required", 400);
 		}
 
-		const isValid = validateCardService(cardNumber);
-
+		const { valid, type } = validateCardService(cardNumber);
 		return res.status(200).json({
-			valid: isValid,
+			valid,
+			type,
 		});
 	} catch (error) {
 		next(error);
