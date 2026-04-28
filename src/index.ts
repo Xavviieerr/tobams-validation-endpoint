@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import dotenv from "dotenv";
 import validationRoute from "./routes/validationRoute.js";
+import { apiRateLimiter } from "./middlewares/rateLimiter.js";
 import type {
 	Request,
 	Response,
@@ -9,6 +10,7 @@ import type {
 	ErrorRequestHandler,
 } from "express";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.js";
+import { requestLogger } from "./middlewares/logger.js";
 
 dotenv.config();
 
@@ -17,7 +19,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-
+app.use(requestLogger);
+app.use(apiRateLimiter);
 //Routes
 app.get("/", (req, res) => {
 	res.send(
@@ -25,7 +28,6 @@ app.get("/", (req, res) => {
 	);
 });
 app.use("/api/validate", validationRoute);
-
 // Global error handler
 app.use(globalErrorHandler);
 
