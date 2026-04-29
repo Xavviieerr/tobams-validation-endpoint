@@ -1,21 +1,20 @@
 import {
 	sanitizeCardNumber,
-	isDigitsOnly,
-	luhnCheck,
+	validateCardNumber,
 } from "../utils/cardValidator.js";
 import { getCardType } from "../utils/cardType.js";
 
 export const validateCardService = (cardNumber: string) => {
 	const sanitized = sanitizeCardNumber(cardNumber);
 
-	if (!sanitized || !isDigitsOnly(sanitized)) {
+	if (!sanitized) {
 		return {
 			valid: false,
 			type: "Unknown",
 		};
 	}
 
-	const valid = luhnCheck(sanitized);
+	const valid = validateCardNumber(cardNumber);
 	const type = getCardType(sanitized);
 
 	return {
