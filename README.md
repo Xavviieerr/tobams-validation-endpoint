@@ -1,4 +1,4 @@
-  # 💳 Tobams Card Validation API
+# 💳 Tobams Card Validation API
 
 A lightweight, privacy-first REST API that validates credit/debit card numbers using the **Luhn algorithm**, detects the card network (Visa, Mastercard, Amex, Discover), and returns a clean JSON response. Built with **Express**, **TypeScript**, and **Vitest**.
 
@@ -6,22 +6,22 @@ A lightweight, privacy-first REST API that validates credit/debit card numbers u
 
 ## 🌐 Deployment Link
 
-> _Not yet deployed. See [How to Run the Project](#how-to-run-the-project) to run it locally._
+#(https://tobams-validation-endpoint.vercel.app)
 
 ---
 
 ## ✨ Features Overview
 
-| Feature | Description |
-|---|---|
-| **Luhn Validation** | Validates card numbers using the industry-standard Luhn (mod 10) algorithm |
-| **Card Type Detection** | Identifies Visa, Mastercard, American Express, and Discover cards |
-| **Input Sanitisation** | Strips spaces and dashes before validation — accepts human-friendly input |
-| **Anonymous Rate Limiting** | IP-based throttle of 100 requests per 15 minutes — no user tracking |
-| **Request Logging** | Console logs every request with method, path, status code, and duration |
-| **Global Error Handling** | Centralised error middleware returns consistent `{ status, message }` JSON |
-| **Strict TypeScript** | Full strict mode, ESM modules, and `verbatimModuleSyntax` enforced |
-| **Unit Tested** | Service logic and HTTP integration tested with Vitest + Supertest |
+| Feature                     | Description                                                                |
+| --------------------------- | -------------------------------------------------------------------------- |
+| **Luhn Validation**         | Validates card numbers using the industry-standard Luhn (mod 10) algorithm |
+| **Card Type Detection**     | Identifies Visa, Mastercard, American Express, and Discover cards          |
+| **Input Sanitisation**      | Strips spaces and dashes before validation — accepts human-friendly input  |
+| **Anonymous Rate Limiting** | IP-based throttle of 100 requests per 15 minutes — no user tracking        |
+| **Request Logging**         | Console logs every request with method, path, status code, and duration    |
+| **Global Error Handling**   | Centralised error middleware returns consistent `{ status, message }` JSON |
+| **Strict TypeScript**       | Full strict mode, ESM modules, and `verbatimModuleSyntax` enforced         |
+| **Unit Tested**             | Service logic and HTTP integration tested with Vitest + Supertest          |
 
 ---
 
@@ -80,34 +80,34 @@ This API is stateless — it has no database. All inputs and outputs are plain J
 
 ```json
 {
-  "cardNumber": "4111 1111 1111 1111"
+	"cardNumber": "4111 1111 1111 1111"
 }
 ```
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `cardNumber` | `string` | ✅ | Spaces and dashes are stripped before processing |
+| Field        | Type     | Required | Notes                                            |
+| ------------ | -------- | -------- | ------------------------------------------------ |
+| `cardNumber` | `string` | ✅       | Spaces and dashes are stripped before processing |
 
 ### Success Response — `200 OK`
 
 ```json
 {
-  "valid": true,
-  "type": "Visa"
+	"valid": true,
+	"type": "Visa"
 }
 ```
 
-| Field | Type | Description |
-|---|---|---|
-| `valid` | `boolean` | `true` if the card number passes the Luhn check |
-| `type` | `string` | Detected network: `"Visa"`, `"Mastercard"`, `"American Express"`, `"Discover"`, or `"Unknown"` |
+| Field   | Type      | Description                                                                                    |
+| ------- | --------- | ---------------------------------------------------------------------------------------------- |
+| `valid` | `boolean` | `true` if the card number passes the Luhn check                                                |
+| `type`  | `string`  | Detected network: `"Visa"`, `"Mastercard"`, `"American Express"`, `"Discover"`, or `"Unknown"` |
 
 ### Error Response — `400 Bad Request`
 
 ```json
 {
-  "status": "error",
-  "message": "cardNumber is required"
+	"status": "error",
+	"message": "cardNumber is required"
 }
 ```
 
@@ -115,8 +115,8 @@ This API is stateless — it has no database. All inputs and outputs are plain J
 
 ```json
 {
-  "status": "error",
-  "message": "Too many requests, please try again later."
+	"status": "error",
+	"message": "Too many requests, please try again later."
 }
 ```
 
@@ -129,7 +129,7 @@ This API is stateless — it has no database. All inputs and outputs are plain J
 Before any validation, the raw card number string is sanitised:
 
 ```ts
-sanitizeCardNumber("4111 1111-1111 1111")
+sanitizeCardNumber("4111 1111-1111 1111");
 // → "4111111111111111"
 ```
 
@@ -145,20 +145,20 @@ The Luhn (mod 10) algorithm is the industry standard for detecting transcription
 4. If the total is divisible by 10 → **valid**
 
 ```ts
-luhnCheck("4111111111111111") // → true
-luhnCheck("1234567890123456") // → false
+luhnCheck("4111111111111111"); // → true
+luhnCheck("1234567890123456"); // → false
 ```
 
 ### 3. Card Type Detection (`cardType.ts`)
 
 Network identification is done with prefix-based regex matching:
 
-| Network | Pattern |
-|---|---|
-| Visa | Starts with `4` |
-| Mastercard | Starts with `51–55` or IIN range `2221–2720` |
-| American Express | Starts with `34` or `37` |
-| Discover | Starts with `6011`, `65`, or `644–649` |
+| Network          | Pattern                                      |
+| ---------------- | -------------------------------------------- |
+| Visa             | Starts with `4`                              |
+| Mastercard       | Starts with `51–55` or IIN range `2221–2720` |
+| American Express | Starts with `34` or `37`                     |
+| Discover         | Starts with `6011`, `65`, or `644–649`       |
 
 ### 4. Service Composition (`cardService.ts`)
 
@@ -166,15 +166,17 @@ The service layer ties everything together:
 
 ```ts
 export const validateCardService = (cardNumber: string) => {
-  const sanitized = sanitizeCardNumber(cardNumber);
-  if (!sanitized || !isDigitsOnly(sanitized)) return { valid: false, type: "Unknown" };
-  return { valid: luhnCheck(sanitized), type: getCardType(sanitized) };
+	const sanitized = sanitizeCardNumber(cardNumber);
+	if (!sanitized || !isDigitsOnly(sanitized))
+		return { valid: false, type: "Unknown" };
+	return { valid: luhnCheck(sanitized), type: getCardType(sanitized) };
 };
 ```
 
 ### 5. Rate Limiting (`rateLimiter.ts`)
 
 Anonymous IP-based throttling via `express-rate-limit`:
+
 - **Window**: 15 minutes
 - **Max requests**: 100 per window
 - **Headers**: `RateLimit-*` standard headers returned; legacy `X-RateLimit-*` suppressed
@@ -207,10 +209,10 @@ POST /api/validate
 
 All routes:
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/` | Health check — returns `"API is running"` |
-| `POST` | `/api/validate` | Validates a card number |
+| Method | Path            | Description                               |
+| ------ | --------------- | ----------------------------------------- |
+| `GET`  | `/`             | Health check — returns `"API is running"` |
+| `POST` | `/api/validate` | Validates a card number                   |
 
 ---
 
@@ -220,10 +222,10 @@ Tests live in `src/tests/unit/` and are run with **Vitest** and **Supertest**.
 
 ### Test Files
 
-| File | Type | What It Tests |
-|---|---|---|
-| `card.service.test.ts` | Unit | `validateCardService` — pure logic, no HTTP |
-| `card.api.test.ts` | Integration | Full HTTP cycle via Supertest against the Express app |
+| File                   | Type        | What It Tests                                         |
+| ---------------------- | ----------- | ----------------------------------------------------- |
+| `card.service.test.ts` | Unit        | `validateCardService` — pure logic, no HTTP           |
+| `card.api.test.ts`     | Integration | Full HTTP cycle via Supertest against the Express app |
 
 ### Philosophy
 
@@ -236,18 +238,18 @@ Tests live in `src/tests/unit/` and are run with **Vitest** and **Supertest**.
 ```ts
 // card.service.test.ts
 it("valid Visa card", () => {
-  const result = validateCardService("4111111111111111");
-  expect(result.valid).toBe(true);
-  expect(result.type).toBe("Visa");
+	const result = validateCardService("4111111111111111");
+	expect(result.valid).toBe(true);
+	expect(result.type).toBe("Visa");
 });
 
 // card.api.test.ts
 it("returns valid response", async () => {
-  const res = await request(app)
-    .post("/api/validate")
-    .send({ cardNumber: "4111111111111111" });
-  expect(res.status).toBe(200);
-  expect(res.body.valid).toBe(true);
+	const res = await request(app)
+		.post("/api/validate")
+		.send({ cardNumber: "4111111111111111" });
+	expect(res.status).toBe(200);
+	expect(res.body.valid).toBe(true);
 });
 ```
 
@@ -308,9 +310,9 @@ Vitest will automatically discover and run all `*.test.ts` files under `src/`.
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|---|---|---|
-| `PORT` | `3000` | Port the HTTP server listens on |
+| Variable | Default | Description                     |
+| -------- | ------- | ------------------------------- |
+| `PORT`   | `3000`  | Port the HTTP server listens on |
 
 Create a `.env` file in the project root (already present in the repo for convenience):
 
@@ -331,18 +333,23 @@ PORT=3000
 ## 🤔 Challenges & Decisions
 
 ### 1. `module: "nodenext"` vs ESM interop
+
 Choosing `"module": "nodenext"` in `tsconfig.json` enforces strict ESM — all local imports must use `.js` extensions (even for `.ts` source files). This avoids runtime resolution errors when running the compiled output but requires discipline in every import statement.
 
 ### 2. `vitest.config.ts` outside `rootDir`
+
 The TypeScript compiler (`rootDir: "./src"`) rejected `vitest.config.ts` at the project root with a `TS6059` error. The fix was to remove it from the `include` array — Vitest picks it up automatically without TypeScript needing to type-check it.
 
 ### 3. Route mounting vs route path
+
 The validation route is mounted at `/api/validate` in `app.ts`. The router internally handles `/` (root), so the effective endpoint is `POST /api/validate`. This avoids the duplication of `/api/validate/validate-card`.
 
 ### 4. Anonymous rate limiting
+
 `express-rate-limit` uses the request IP by default — no cookies, no sessions, no user tracking. This satisfies a privacy-first design requirement while still protecting against abuse.
 
 ### 5. Stateless design
+
 Keeping the API fully stateless (no DB, no cache) means it is trivially horizontally scalable and has zero infrastructure dependencies beyond Node.js.
 
 ---
@@ -359,8 +366,8 @@ Keeping the API fully stateless (no DB, no cache) means it is trivially horizont
 
 ## 👤 Author / Submission Info
 
-| Field | Value |
-|---|---|
-| **Project** | Tobams Card Validation Endpoint |
-| **Stack** | Node.js · Express · TypeScript · Vitest · Supertest |
-| **Submitted for** | Tobams Backend Assessment |
+| Field             | Value                                               |
+| ----------------- | --------------------------------------------------- |
+| **Project**       | Tobams Card Validation Endpoint                     |
+| **Stack**         | Node.js · Express · TypeScript · Vitest · Supertest |
+| **Submitted for** | Tobams Backend Assessment                           |
